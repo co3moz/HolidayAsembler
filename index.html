@@ -115,6 +115,9 @@
 			    	if(job == "set") {
 			    		v[a] = b;
 			    		return b;
+			    	} else if(job == "silentset") {
+			    		v[a] = b;
+			    		return "";
 			    	} else if(job == "get") {
 			    		return v[a] || b;
 			    	}
