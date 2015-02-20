@@ -1,0 +1,128 @@
+<html>
+<head>
+	<title>Holiday Asembler</title>
+	<meta charset="UTF8"/>
+	<style>
+		#holiday {
+			border: 1px solid blue;
+		}
+
+		#output {
+			border: 1px dashed blue;
+		}
+
+		#logo {
+			text-align: center;
+			color: blue;
+			font-size: 20pt;
+			font-family: fantasy;
+		}
+
+		div:focus {outline:0 !important;}
+	</style>
+</head>
+<body>
+	<div id="logo">
+		HOLIDAY ASEMBLER
+	</div>
+	<div id="holiday" contentEditable="true" spellcheck="false">
+		A  = set 1, 10<br>
+		B = set 2, 10<br><br>
+
+		A + B = add get 1, -1, get 2, -1<br>
+		A - B = sub get 1, -1, get 2, -1<br>
+		A * B = mul get 1, -1, get 2, -1<br>
+		A / B = div get 1, -1, get 2, -1
+</div><br><hr><br>
+	<div id="output"></div>
+</body>
+</html>
+
+<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+<script>
+	// https://gist.github.com/co3moz/00d0156c554ff0c3c8ae
+	String.prototype.superReplace = function(regex, callback) {
+		var temp = this;
+		var output = null;
+		while(output = regex.exec(this)) {
+			temp = temp.replace(output.shift(), callback.apply(null, output));
+		}
+		return temp;
+	}
+
+	String.prototype.ultraReplace = function(regexp, callback) {
+		var temp = this;
+		var temp2;
+		var timeout = new Date()+10000;
+		while(temp != (temp2 = temp.superReplace(regexp, callback))) {
+			if(timeout > new Date()) {
+				return "timeout";
+			}
+			temp = temp2;
+		}
+		return temp;
+	}
+
+	String.prototype.ultra = function(regexp, callbacks) {
+		var temp = this;
+		var timeout = new Date()+30000;
+		var temp2;
+		while(true) {
+			if(timeout > new Date()) {
+				return "timout";
+			}
+
+			for(i in callbacks) {
+				temp = temp.ultraReplace(regexp, callbacks[i]);
+			}
+
+			if(temp2 == temp) {
+				break;
+			}
+
+			temp2 = temp;
+		}
+		return temp;
+	}
+
+	$(function() {
+		var holiday = $("#holiday");
+		var output = $("#output");
+		var r = /(\w+) +([-\d]+) *, *([-\d]+);?/g;
+		var c = function() {
+			var v={};
+			output[0].innerText = (holiday[0].innerText.ultra(r, [function(job, a, b) {	
+			    	var a = parseInt(a);
+			    	var b = parseInt(b);
+
+			    	if(job == "add") {
+			    		return (a+b);
+			    	} else if(job == "sub") {
+			    		return (a-b);
+			    	} else if(job == "mul") {
+			    		return  (a*b);
+			    	} else if(job == "div") {
+			    		return  (a/b);
+			    	}
+
+			    	return job + " " + a +  "," + b + ";";
+			}, function(job, a, b) {	
+			    	var a = parseInt(a);
+			    	var b = parseInt(b);
+
+			    	if(job == "set") {
+			    		v[a] = b;
+			    		return b;
+			    	} else if(job == "get") {
+			    		return v[a] || b;
+			    	}
+
+			    	return job + " " + a +  "," + b + ";";
+			}]));
+		};
+		c();
+		holiday.on("keyup", c);
+	});
+</script>
