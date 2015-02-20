@@ -105,8 +105,20 @@
 			    		return  (a*b);
 			    	} else if(job == "div") {
 			    		return  (a/b);
+			    	} else if(job == "lshift") {
+			    		return (a<<b);
+			    	} else if(job == "rshift") {
+			    		return (a>>b);
+			    	} else if(job == "and") {
+			    		return (a&b);
+			    	} else if(job == "or") {
+			    		return (a|b);
+			    	} else if(job == "xor") {
+			    		return (a^b);
+			    	} else if(job == "not") {
+			    		return (!a || !b);
 			    	}
-
+			    	
 			    	return job + " " + a +  "," + b + ";";
 			}, function(job, a, b) {	
 			    	var a = parseInt(a);
